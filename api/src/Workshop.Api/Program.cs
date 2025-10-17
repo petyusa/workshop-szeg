@@ -28,6 +28,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Migrate database
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<WorkshopDbContext>();
+    dbContext.Database.Migrate();
+}
+
 // Configure middleware pipeline
 if (app.Environment.IsDevelopment())
 {
@@ -68,5 +75,8 @@ app.MapGet("/api/auth/me", (HttpContext context) =>
 
 // Map location endpoints
 app.MapLocationEndpoints();
+
+// Map reservable object endpoints
+app.MapReservableObjectEndpoints();
 
 app.Run();
