@@ -14,6 +14,10 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () => import('./components/home/home').then(m => m.HomeComponent)
+      },
+      {
+        path: 'my-reservations',
+        loadComponent: () => import('./components/my-reservations/my-reservations').then(m => m.MyReservationsComponent)
       }
     ]
   },
