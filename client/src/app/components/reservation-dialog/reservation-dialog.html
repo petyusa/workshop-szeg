@@ -11,26 +11,88 @@
           type="datetime-local"
           id="startDateTime"
           [value]="startDateTime()"
-          (input)="startDateTime.set($any($event.target).value)"
+          (input)="onStartDateTimeChange($any($event.target).value)"
           class="w-full px-3 py-2 border rounded-lg"
-          style="border-color: #d3d3d3;"
+          [style.border-color]="startDateError() ? '#d32f2f' : '#d3d3d3'"
           required
         />
+        @if (startDateError()) {
+          <p class="text-xs mt-1" style="color: #d32f2f;">{{ startDateError() }}</p>
+        }
       </div>
 
       <div>
-        <label for="endDateTime" class="block text-sm font-medium mb-1" style="color: #606a7a;">
-          End Date & Time
+        <label class="block text-sm font-medium mb-2" style="color: #606a7a;">
+          Duration or End Time
         </label>
-        <input
-          type="datetime-local"
-          id="endDateTime"
-          [value]="endDateTime()"
-          (input)="endDateTime.set($any($event.target).value)"
-          class="w-full px-3 py-2 border rounded-lg"
-          style="border-color: #d3d3d3;"
-          required
-        />
+        <div class="flex gap-2 mb-2">
+          <button
+            type="button"
+            (click)="useDuration.set(true)"
+            class="flex-1 px-3 py-1 rounded text-sm font-medium"
+            [style.background-color]="useDuration() ? '#7dd13d' : '#eaeaea'"
+            [style.color]="useDuration() ? '#ffffff' : '#121212'"
+          >
+            Duration
+          </button>
+          <button
+            type="button"
+            (click)="useDuration.set(false)"
+            class="flex-1 px-3 py-1 rounded text-sm font-medium"
+            [style.background-color]="!useDuration() ? '#7dd13d' : '#eaeaea'"
+            [style.color]="!useDuration() ? '#ffffff' : '#121212'"
+          >
+            End Time
+          </button>
+        </div>
+
+        @if (useDuration()) {
+          <div class="flex gap-2">
+            <div class="flex-1">
+              <label for="durationHours" class="block text-xs mb-1" style="color: #606a7a;">Hours</label>
+              <input
+                type="number"
+                id="durationHours"
+                [value]="durationHours()"
+                (input)="onDurationChange($any($event.target).value, durationMinutes())"
+                min="0"
+                max="24"
+                class="w-full px-3 py-2 border rounded-lg"
+                [style.border-color]="durationError() ? '#d32f2f' : '#d3d3d3'"
+              />
+            </div>
+            <div class="flex-1">
+              <label for="durationMinutes" class="block text-xs mb-1" style="color: #606a7a;">Minutes</label>
+              <input
+                type="number"
+                id="durationMinutes"
+                [value]="durationMinutes()"
+                (input)="onDurationChange(durationHours(), $any($event.target).value)"
+                min="0"
+                max="59"
+                step="15"
+                class="w-full px-3 py-2 border rounded-lg"
+                [style.border-color]="durationError() ? '#d32f2f' : '#d3d3d3'"
+              />
+            </div>
+          </div>
+          @if (durationError()) {
+            <p class="text-xs mt-1" style="color: #d32f2f;">{{ durationError() }}</p>
+          }
+        } @else {
+          <input
+            type="datetime-local"
+            id="endDateTime"
+            [value]="endDateTime()"
+            (input)="endDateTime.set($any($event.target).value)"
+            class="w-full px-3 py-2 border rounded-lg"
+            [style.border-color]="endDateError() ? '#d32f2f' : '#d3d3d3'"
+            required
+          />
+          @if (endDateError()) {
+            <p class="text-xs mt-1" style="color: #d32f2f;">{{ endDateError() }}</p>
+          }
+        }
       </div>
 
       <div class="flex gap-3 pt-4">
@@ -46,7 +108,9 @@
           type="submit"
           class="flex-1 px-4 py-2 rounded-lg font-medium text-white"
           style="background-color: #7dd13d;"
-          [disabled]="!startDateTime() || !endDateTime()"
+          [disabled]="!isFormValid()"
+          [style.opacity]="isFormValid() ? '1' : '0.5'"
+          [style.cursor]="isFormValid() ? 'pointer' : 'not-allowed'"
         >
           Reserve
         </button>
