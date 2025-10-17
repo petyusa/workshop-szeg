@@ -1,0 +1,55 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6" style="color: #121212;">My Reservations</h1>
+
+  @if (loading()) {
+    <div class="text-center py-8">
+      <p style="color: #606a7a;">Loading reservations...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="p-4 mb-4 rounded-lg" style="background-color: #e4f9d2; border: 1px solid #7dd13d;">
+      <p style="color: #3f7c2e;">{{ error() }}</p>
+    </div>
+  }
+
+  @if (!loading() && reservations().length === 0) {
+    <div class="text-center py-8">
+      <p style="color: #606a7a;">You don't have any reservations yet.</p>
+    </div>
+  }
+
+  @if (reservations().length > 0) {
+    <div class="grid gap-4">
+      @for (reservation of reservations(); track reservation.id) {
+        <div class="border rounded-lg p-4" style="border-color: #d3d3d3;">
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold" style="color: #121212;">
+                {{ reservation.objectName }}
+              </h3>
+              <p class="text-sm" style="color: #606a7a;">
+                {{ reservation.objectType }}
+              </p>
+              <div class="mt-2 space-y-1">
+                <p class="text-sm" style="color: #606a7a;">
+                  <span class="font-medium">Start:</span> {{ formatDateTime(reservation.startDateTime) }}
+                </p>
+                <p class="text-sm" style="color: #606a7a;">
+                  <span class="font-medium">End:</span> {{ formatDateTime(reservation.endDateTime) }}
+                </p>
+              </div>
+            </div>
+            <button
+              (click)="deleteReservation(reservation.id)"
+              class="px-4 py-2 rounded-lg font-medium text-white"
+              style="background-color: #606a7a;"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
