@@ -69,7 +69,7 @@ public class WorkshopDbContext : DbContext
         var objectId = 1;
         var reservableObjects = new List<ReservableObject>();
 
-        // Downtown Location objects
+        // Downtown Location objects - arranged in a simple grid
         for (int i = 1; i <= 5; i++)
         {
             reservableObjects.Add(new ReservableObject 
@@ -78,7 +78,9 @@ public class WorkshopDbContext : DbContext
                 Name = $"Desk {i}01", 
                 Type = ReservableObjectType.Desk, 
                 IsAvailable = i != 2 && i != 4, // Desk 201 and 401 are reserved
-                LocationId = 1 
+                LocationId = 1,
+                PositionX = 2 + ((i - 1) % 3) * 3, // 2, 5, 8, 2, 5
+                PositionY = 2 + ((i - 1) / 3) * 3  // 2, 2, 2, 5, 5
             });
         }
         for (int i = 1; i <= 3; i++)
@@ -89,11 +91,13 @@ public class WorkshopDbContext : DbContext
                 Name = $"Parking A-{i}", 
                 Type = ReservableObjectType.ParkingSpace, 
                 IsAvailable = i != 2, // Parking A-2 is reserved
-                LocationId = 1 
+                LocationId = 1,
+                PositionX = 2 + (i - 1) * 3, // 2, 5, 8
+                PositionY = 8
             });
         }
 
-        // North Branch objects
+        // North Branch objects - arranged in a simple grid
         for (int i = 1; i <= 5; i++)
         {
             reservableObjects.Add(new ReservableObject 
@@ -102,7 +106,9 @@ public class WorkshopDbContext : DbContext
                 Name = $"Desk {i}02", 
                 Type = ReservableObjectType.Desk, 
                 IsAvailable = i != 1 && i != 3, // Desk 102 and 302 are reserved
-                LocationId = 2 
+                LocationId = 2,
+                PositionX = 2 + ((i - 1) % 3) * 3,
+                PositionY = 2 + ((i - 1) / 3) * 3
             });
         }
         for (int i = 1; i <= 3; i++)
@@ -113,11 +119,13 @@ public class WorkshopDbContext : DbContext
                 Name = $"Parking B-{i}", 
                 Type = ReservableObjectType.ParkingSpace, 
                 IsAvailable = i != 1, // Parking B-1 is reserved
-                LocationId = 2 
+                LocationId = 2,
+                PositionX = 2 + (i - 1) * 3,
+                PositionY = 8
             });
         }
 
-        // East Side Location objects
+        // East Side Location objects - arranged in a simple grid
         for (int i = 1; i <= 5; i++)
         {
             reservableObjects.Add(new ReservableObject 
@@ -126,7 +134,9 @@ public class WorkshopDbContext : DbContext
                 Name = $"Desk {i}03", 
                 Type = ReservableObjectType.Desk, 
                 IsAvailable = i != 5, // Desk 503 is reserved
-                LocationId = 3 
+                LocationId = 3,
+                PositionX = 2 + ((i - 1) % 3) * 3,
+                PositionY = 2 + ((i - 1) / 3) * 3
             });
         }
         for (int i = 1; i <= 3; i++)
@@ -137,7 +147,9 @@ public class WorkshopDbContext : DbContext
                 Name = $"Parking C-{i}", 
                 Type = ReservableObjectType.ParkingSpace, 
                 IsAvailable = true, // All parking available at East Side
-                LocationId = 3 
+                LocationId = 3,
+                PositionX = 2 + (i - 1) * 3,
+                PositionY = 8
             });
         }
 

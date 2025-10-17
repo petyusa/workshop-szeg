@@ -26,7 +26,9 @@ public static class ReservableObjectEndpoints
                     o.Name,
                     o.Type,
                     o.IsAvailable,
-                    o.LocationId
+                    o.LocationId,
+                    o.PositionX,
+                    o.PositionY
                 ))
                 .ToListAsync();
 
