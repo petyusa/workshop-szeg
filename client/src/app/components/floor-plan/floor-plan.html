@@ -1,0 +1,113 @@
+<div class="floor-plan-container">
+  @if (objectService.loading()) {
+    <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-8 text-center">
+      <div class="inline-block w-12 h-12 border-4 border-[#7dd13d] border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p class="text-[#606a7a]">Loading floor plan...</p>
+    </div>
+  } @else if (objectService.totalCount() === 0) {
+    <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-8 text-center">
+      <div class="w-16 h-16 bg-[#eaeaea] rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-[#606a7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-[#121212] mb-2">No Floor Plan Available</h3>
+      <p class="text-[#606a7a]">This location doesn't have a floor plan configured yet</p>
+    </div>
+  } @else {
+    <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-6 shadow-sm">
+      <!-- Floor Plan Header -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-[#606a7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
+          <h2 class="text-2xl font-bold text-[#121212]">Floor Plan</h2>
+        </div>
+        <div class="flex gap-4 text-sm">
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 bg-[#7dd13d] rounded"></div>
+            <span class="text-[#606a7a]">Available</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 bg-[#606a7a] rounded"></div>
+            <span class="text-[#606a7a]">Reserved</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floor Plan Grid -->
+      <div class="floor-plan-grid-wrapper">
+        <div class="floor-plan-grid" 
+             [style.width.px]="gridSize * cellSize"
+             [style.height.px]="gridSize * cellSize">
+          
+          <!-- Grid background -->
+          <div class="grid-background"></div>
+
+          <!-- Positioned Objects -->
+          @for (object of getPositionedObjects(); track object.id) {
+            <div class="floor-plan-object"
+                 [class.available]="object.isAvailable"
+                 [class.reserved]="!object.isAvailable"
+                 [class.desk]="object.type === ReservableObjectType.Desk"
+                 [class.parking]="object.type === ReservableObjectType.ParkingSpace"
+                 [class.selected]="selectedObject()?.id === object.id"
+                 [style]="getObjectStyle(object)"
+                 (click)="selectObject(object)"
+                 [title]="object.name + ' - ' + (object.isAvailable ? 'Available' : 'Reserved')">
+              
+              <!-- Icon -->
+              <svg class="object-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getTypeIcon(object.type)"/>
+              </svg>
+              
+              <!-- Name -->
+              <span class="object-name">{{ object.name }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Selected Object Details -->
+      @if (selectedObject()) {
+        <div class="mt-6 p-4 border-2 rounded-lg transition-all"
+             [class.border-[#7dd13d]]="selectedObject()!.isAvailable"
+             [class.bg-[#e4f9d2]]="selectedObject()!.isAvailable"
+             [class.border-[#606a7a]]="!selectedObject()!.isAvailable"
+             [class.bg-[#eaeaea]]="!selectedObject()!.isAvailable">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <h3 class="text-lg font-bold text-[#121212] mb-1">{{ selectedObject()!.name }}</h3>
+              <p class="text-sm mb-2" 
+                 [class.text-[#3f7c2e]]="selectedObject()!.isAvailable"
+                 [class.text-[#606a7a]]="!selectedObject()!.isAvailable">
+                {{ getTypeLabel(selectedObject()!.type) }}
+              </p>
+              <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold"
+                      [class.bg-[#7dd13d]]="selectedObject()!.isAvailable"
+                      [class.text-[#ffffff]]="selectedObject()!.isAvailable"
+                      [class.bg-[#606a7a]]="!selectedObject()!.isAvailable"
+                      [class.text-[#ffffff]]="!selectedObject()!.isAvailable">
+                  {{ selectedObject()!.isAvailable ? 'Available' : 'Reserved' }}
+                </span>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              @if (selectedObject()!.isAvailable) {
+                <button class="px-4 py-2 bg-[#7dd13d] text-[#ffffff] rounded-lg font-semibold hover:bg-[#6bc42d] transition-colors">
+                  Reserve
+                </button>
+              }
+              <button (click)="clearSelection()" 
+                      class="px-4 py-2 bg-[#eaeaea] text-[#606a7a] rounded-lg font-semibold hover:bg-[#d3d3d3] transition-colors">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

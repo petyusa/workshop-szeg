@@ -7,5 +7,7 @@ public record ReservableObjectResponse(
     string Name,
     ReservableObjectType Type,
     bool IsAvailable,
-    int LocationId
+    int LocationId,
+    int? PositionX,
+    int? PositionY
 );

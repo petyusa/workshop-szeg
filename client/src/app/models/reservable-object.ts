@@ -9,4 +9,6 @@ export interface ReservableObject {
   type: ReservableObjectType;
   isAvailable: boolean;
   locationId: number;
+  positionX?: number | null;
+  positionY?: number | null;
 }

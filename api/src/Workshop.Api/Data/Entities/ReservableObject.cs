@@ -8,4 +8,6 @@ public class ReservableObject
     public bool IsAvailable { get; set; }
     public int LocationId { get; set; }
     public Location? Location { get; set; }
+    public int? PositionX { get; set; }
+    public int? PositionY { get; set; }
 }
